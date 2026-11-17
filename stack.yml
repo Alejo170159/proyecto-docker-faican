@@ -1,0 +1,41 @@
+services:
+  base_datos:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mi_base
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: password123
+    volumes:
+      - faican_datos:/var/lib/mysql
+    networks:
+      - Faican
+
+  app_web:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8888:80"
+    environment:
+      PMA_HOST: base_datos
+    networks:
+      - Faican
+    depends_on:
+      - base_datos
+
+  app_python:
+    build: .
+    ports:
+      - "5555:5000"
+    networks:
+      - Faican
+    depends_on:
+      - base_datos
+
+networks:
+  Faican:
+    external: true
+
+volumes:
+  faican_datos:
+    external: true
+
